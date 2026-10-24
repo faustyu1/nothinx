@@ -1,6 +1,24 @@
-# Nothinx
+<p align="center">
+  <img src="docs/icon.png" width="128" height="128" alt="Nothinx icon">
+</p>
 
-A native macOS menu bar app for Nothing and CMF earbuds. It talks to the earbuds directly over Bluetooth, so the settings normally available only in the Nothing X phone app can be changed from a Mac.
+<h1 align="center">Nothinx</h1>
+
+<p align="center">
+  A native macOS menu bar app for Nothing and CMF earbuds.<br>
+  Free and open source.
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/github/v/release/faustyu1/nothinx?label=release&color=blue" alt="Release">
+  <img src="https://img.shields.io/badge/license-MIT-blue" alt="License: MIT">
+  <img src="https://img.shields.io/badge/macOS-26%2B-black?logo=apple" alt="macOS 26+">
+  <img src="https://img.shields.io/badge/Swift-6-orange?logo=swift&logoColor=white" alt="Swift 6">
+</p>
+
+---
+
+Nothinx talks to the earbuds directly over Bluetooth, so the settings normally available only in the Nothing X phone app can be changed from a Mac.
 
 Tested with **CMF Buds Pro 2** (firmware 1.0.1.74). Other Nothing and CMF models share the same protocol and may partly work, but their feature sets differ.
 
