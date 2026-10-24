@@ -1,0 +1,50 @@
+name: Nothinx
+options:
+  bundleIdPrefix: dev.nothinx
+  deploymentTarget:
+    macOS: "26.0"
+settings:
+  base:
+    DEVELOPMENT_TEAM: 2C76W4D5L5
+    CODE_SIGN_STYLE: Automatic
+    SWIFT_VERSION: "6.0"
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    ENABLE_HARDENED_RUNTIME: NO
+targets:
+  NothinxKit:
+    type: framework
+    platform: macOS
+    sources: [Sources/NothinxKit]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: dev.nothinx.kit
+        APPLICATION_EXTENSION_API_ONLY: YES
+        GENERATE_INFOPLIST_FILE: YES
+        SKIP_INSTALL: YES
+  Nothinx:
+    type: application
+    platform: macOS
+    sources: [Sources/Nothinx]
+    dependencies:
+      - target: NothinxKit
+      - target: NothinxWidget
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: dev.nothinx.app
+        INFOPLIST_FILE: Resources/Info.plist
+        CODE_SIGN_ENTITLEMENTS: Resources/Nothinx.entitlements
+  NothinxWidget:
+    type: app-extension
+    platform: macOS
+    sources: [Widget]
+    dependencies:
+      - target: NothinxKit
+      - sdk: WidgetKit.framework
+      - sdk: SwiftUI.framework
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: dev.nothinx.app.widget
+        PRODUCT_NAME: NothinxWidget
+        INFOPLIST_FILE: Resources/Widget-Info.plist
+        CODE_SIGN_ENTITLEMENTS: Resources/Widget.entitlements
