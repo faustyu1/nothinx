@@ -37,7 +37,7 @@ public enum NothingProtocol {
         case setSpatialAudio = 0xf052
         // Unsolicited
         case batteryEvent = 0xe001
-        case caseClosedEvent = 0xe002
+        case wearEvent = 0xe002
         case audioModeEvent = 0xe003
     }
 

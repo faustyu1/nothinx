@@ -215,13 +215,38 @@ final class BudsController {
                 break
             }
         }
+        let wasInEar = state.inEar
         guard state.apply(frame) else { return }
         publishWidget()
+        if frame.command == NothingProtocol.Command.wearEvent.rawValue {
+            wearChanged(from: wasInEar)
+        }
+        if frame.command == NothingProtocol.Command.toggles.rawValue, state.inEarDetection == true {
+            // Ask for the media-key permission up front, not on the first removal.
+            MediaControl.ensureAccess()
+        }
         if frame.command == NothingProtocol.Command.battery.rawValue
             || frame.command == NothingProtocol.Command.batteryEvent.rawValue {
             lastSeenBattery = [state.left, state.right]
             Self.saveBattery(state.left, "left")
             Self.saveBattery(state.right, "right")
+        }
+    }
+
+    /// Set when taking a bud out paused playback, so putting it back resumes only what we paused.
+    private var pausedByWear = false
+
+    private func wearChanged(from old: [Earbud: Bool]) {
+        guard state.inEarDetection == true else { return }
+        let bothBefore = old[.left] == true && old[.right] == true
+        let bothNow = state.inEar[.left] == true && state.inEar[.right] == true
+        if bothBefore, !bothNow, MediaControl.isPlaying {
+            MediaControl.pressPlayPause()
+            pausedByWear = true
+        } else if bothNow, pausedByWear {
+            pausedByWear = false
+            // Some players keep the output device running while paused, so it is not checked here.
+            MediaControl.pressPlayPause()
         }
     }
 

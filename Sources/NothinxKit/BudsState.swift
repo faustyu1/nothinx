@@ -137,6 +137,8 @@ public struct BudsState: Equatable, Sendable {
     public var lowLatency: Bool?
     public var spatialAudio: Bool?
     public var gestures: [GestureKey: GestureAction] = [:]
+    /// Whether each bud sits in an ear, from the wear event; nil until the buds report it.
+    public var inEar: [Earbud: Bool] = [:]
 
     public init() {}
 
@@ -174,6 +176,13 @@ public struct BudsState: Equatable, Sendable {
             }
         case .equalizer:
             if let code = p.first { equalizer = EQPreset(rawValue: code) }
+        case .wearEvent:
+            // count, then (device, state); low nibble 0xC = in ear, 0xA = out, 0x8 = in the case.
+            guard let count = p.first else { break }
+            for n in 0..<Int(count) where 2 + 2 * n < p.count {
+                guard let bud = Earbud(rawValue: p[1 + 2 * n]) else { continue }
+                inEar[bud] = p[2 + 2 * n] & 0x0f == 0x0c
+            }
         case .ultraBass:
             if p.count >= 1 { ultraBassEnabled = p[0] == 0x01 }
             if p.count >= 2 { ultraBassLevel = max(1, min(5, (Int(p[1]) + 1) / 2)) }

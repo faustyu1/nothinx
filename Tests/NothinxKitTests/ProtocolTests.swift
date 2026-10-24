@@ -71,3 +71,12 @@ private func bytes(_ hex: String) -> [UInt8] {
     #expect(state.noiseMode == .ancLow)
     #expect(state.lastANCLevel == .ancLow)
 }
+
+@Test func wearEventTracksEachBud() {
+    var decoder = FrameDecoder()
+    var state = BudsState()
+    for frame in decoder.feed(bytes("55 00 01 02 E0 07 00 00 03 02 8C 03 8A 04 00")) { state.apply(frame) }
+    #expect(state.inEar == [.left: true, .right: false])
+    for frame in decoder.feed(bytes("55 00 01 02 E0 07 00 00 03 02 8C 03 8C 04 00")) { state.apply(frame) }
+    #expect(state.inEar == [.left: true, .right: true])
+}
