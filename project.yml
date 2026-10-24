@@ -9,7 +9,7 @@ settings:
     DEVELOPMENT_TEAM: 2C76W4D5L5
     CODE_SIGN_STYLE: Automatic
     SWIFT_VERSION: "6.0"
-    MARKETING_VERSION: "1.1.0"
+    MARKETING_VERSION: "1.0.0"
     CURRENT_PROJECT_VERSION: "1"
     ENABLE_HARDENED_RUNTIME: NO
 targets:
@@ -26,7 +26,7 @@ targets:
   Nothinx:
     type: application
     platform: macOS
-    sources: [Sources/Nothinx]
+    sources: [Sources/Nothinx, Resources/Assets.xcassets]
     dependencies:
       - target: NothinxKit
       - target: NothinxWidget
@@ -34,6 +34,7 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: dev.nothinx.app
         INFOPLIST_FILE: Resources/Info.plist
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         CODE_SIGN_ENTITLEMENTS: Resources/Nothinx.entitlements
   NothinxWidget:
     type: app-extension
