@@ -34,8 +34,8 @@ struct MenuBarLabel: View {
         case .mode:
             switch controller.state.noiseMode {
             case .some(let mode) where mode.isANC: "ANC"
-            case .transparency: "Прозр."
-            case .off: "Выкл"
+            case .transparency: String(localized: "Transp.")
+            case .off: String(localized: "Off")
             default: nil
             }
         }

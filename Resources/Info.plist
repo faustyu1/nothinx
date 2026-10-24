@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
-	<string>ru</string>
+	<string>en</string>
 	<key>CFBundleDisplayName</key>
 	<string>Nothinx</string>
 	<key>CFBundleExecutable</key>
@@ -33,6 +33,6 @@
 	<key>LSUIElement</key>
 	<true/>
 	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>Nothinx управляет наушниками по Bluetooth.</string>
+	<string>Nothinx uses Bluetooth to control your earbuds.</string>
 </dict>
 </plist>

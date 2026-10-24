@@ -9,9 +9,9 @@ enum MenuBarDisplay: String, CaseIterable {
 
     var title: String {
         switch self {
-        case .icon: "Только иконка"
-        case .battery: "Заряд"
-        case .mode: "Режим шумодава"
+        case .icon: String(localized: "Icon only")
+        case .battery: String(localized: "Battery")
+        case .mode: String(localized: "Noise mode")
         }
     }
 }

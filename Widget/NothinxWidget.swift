@@ -12,11 +12,11 @@ import WidgetKit
 enum NoiseOption: String, AppEnum {
     case anc, transparency, off
 
-    static let typeDisplayRepresentation: TypeDisplayRepresentation = "Режим шумоподавления"
+    static let typeDisplayRepresentation: TypeDisplayRepresentation = "Noise control mode"
     static let caseDisplayRepresentations: [NoiseOption: DisplayRepresentation] = [
-        .anc: DisplayRepresentation(title: "Шумодав", image: .init(systemName: "waveform.path.ecg")),
-        .transparency: DisplayRepresentation(title: "Прозрачность", image: .init(systemName: "ear.and.waveform")),
-        .off: DisplayRepresentation(title: "Выкл", image: .init(systemName: "speaker.slash")),
+        .anc: DisplayRepresentation(title: "ANC", image: .init(systemName: "waveform.path.ecg")),
+        .transparency: DisplayRepresentation(title: "Transparency", image: .init(systemName: "ear.and.waveform")),
+        .off: DisplayRepresentation(title: "Off", image: .init(systemName: "speaker.slash")),
     ]
 
     init(_ choice: NoiseChoice) { self = NoiseOption(rawValue: choice.rawValue)! }
@@ -26,9 +26,9 @@ enum NoiseOption: String, AppEnum {
 extension NoiseChoice {
     var title: String {
         switch self {
-        case .anc: "Шумодав"
-        case .transparency: "Прозрачность"
-        case .off: "Выкл"
+        case .anc: String(localized: "ANC")
+        case .transparency: String(localized: "Transparency")
+        case .off: String(localized: "Off")
         }
     }
 
@@ -42,10 +42,10 @@ extension NoiseChoice {
 }
 
 struct SetNoiseModeIntent: AppIntent {
-    static let title: LocalizedStringResource = "Режим шумоподавления"
-    static let description = IntentDescription("Переключает шумоподавление наушников через Nothinx.")
+    static let title: LocalizedStringResource = "Noise control mode"
+    static let description = IntentDescription("Switches the earbuds’ noise control through Nothinx.")
 
-    @Parameter(title: "Режим")
+    @Parameter(title: "Mode")
     var option: NoiseOption
 
     init() {}
@@ -70,12 +70,12 @@ struct SetNoiseModeIntent: AppIntent {
 /// Control Center toggles turn their mode on; turning one off falls back to transparency
 /// (or to ANC when transparency itself is switched off), like the AirPods module.
 struct ToggleNoiseModeIntent: SetValueIntent {
-    static let title: LocalizedStringResource = "Переключить режим шумоподавления"
+    static let title: LocalizedStringResource = "Toggle noise control mode"
 
-    @Parameter(title: "Режим")
+    @Parameter(title: "Mode")
     var option: NoiseOption
 
-    @Parameter(title: "Включён")
+    @Parameter(title: "On")
     var value: Bool
 
     init() {}
@@ -178,7 +178,7 @@ struct ControlWidgetView: View {
                 }
             } else {
                 Spacer(minLength: 0)
-                Text(snapshot == nil ? "Открой Nothinx" : "Наушники не подключены")
+                Text(snapshot == nil ? String(localized: "Open Nothinx") : String(localized: "Earbuds not connected"))
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity)
@@ -212,8 +212,8 @@ struct NothinxControlWidget: Widget {
             ControlWidgetView(entry: entry)
                 .containerBackground(.fill.tertiary, for: .widget)
         }
-        .configurationDisplayName("Шумоподавление")
-        .description("Переключает режим шумоподавления наушников.")
+        .configurationDisplayName("Noise Control")
+        .description("Switches the earbuds’ noise control mode.")
         .supportedFamilies([.systemSmall, .systemMedium])
     }
 }
@@ -241,7 +241,7 @@ func noiseModeControl(_ choice: NoiseChoice, kind: String) -> some ControlWidget
         .tint(.accentColor)
     }
     .displayName(LocalizedStringResource(stringLiteral: choice.title))
-    .description("Режим шумоподавления наушников.")
+    .description("Earbuds noise control mode.")
 }
 
 struct ANCControl: ControlWidget {

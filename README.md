@@ -1,70 +1,76 @@
 # Nothinx
 
-Нативное приложение для macOS в строке меню, которое управляет наушниками Nothing / CMF по Bluetooth — замена Nothing X для Мака.
+A native macOS menu bar app for Nothing and CMF earbuds. It talks to the earbuds directly over Bluetooth, so the settings normally available only in the Nothing X phone app can be changed from a Mac.
 
-Проверено на **CMF Buds Pro 2** (прошивка 1.0.1.74). Другие модели Nothing и CMF, скорее всего, частично работают: протокол у них общий, но наборы функций отличаются.
+Tested with **CMF Buds Pro 2** (firmware 1.0.1.74). Other Nothing and CMF models share the same protocol and may partly work, but their feature sets differ.
 
-## Что умеет
+The interface follows the system language; English and Russian are included.
 
-- заряд левого и правого наушника и кейса;
-- шумоподавление: шумодав (адаптивный, высокий, средний, низкий), прозрачность, выкл;
-- эквалайзер (пресеты) и Ultra Bass с уровнем 1–5;
-- жесты для каждого наушника: двойное и тройное касание, удержание, двойное касание с удержанием;
-- низкая задержка, пространственный звук;
-- определение уха с автопаузой как у AirPods: вынул наушник — музыка на паузе, вставил — продолжается (нужно разрешение «Универсальный доступ» для медиаклавиши);
-- «найти наушники» — пищит выбранный наушник;
-- автоподключение, когда наушники подключаются к Маку; запуск при входе в систему;
-- виджет на рабочий стол и плитки для Пункта управления с переключением шумодава (только при сборке из исходников, см. ниже).
+## Features
 
-## Установка
+- Battery level of each earbud and the case
+- Noise control: ANC (adaptive, high, medium, low), transparency, off
+- Equalizer presets and Ultra Bass with levels 1–5
+- Touch gestures per earbud: double tap, triple tap, tap and hold, double tap and hold
+- Low latency mode and spatial audio
+- In-ear detection with automatic pause: taking an earbud out pauses playback, putting it back resumes it
+- Find my earbuds: plays a tone on the chosen earbud
+- Connects automatically when the earbuds connect to the Mac; optional launch at login
+- Desktop widget and Control Center controls for switching noise control (source builds only, see below)
 
-Нужна macOS 26 или новее.
+## Requirements
 
-1. Скачай `Nothinx.zip` из [релизов](../../releases) и распакуй в «Программы».
-2. Приложение не нотаризовано, поэтому при первом запуске macOS его заблокирует. Сними карантин:
+- macOS 26 or later
+- Earbuds paired with the Mac in System Settings → Bluetooth
+
+## Installation
+
+1. Download `Nothinx.zip` from [Releases](../../releases) and move `Nothinx.app` to `/Applications`.
+2. The app is not notarized, so macOS blocks the first launch. Remove the quarantine flag:
    ```bash
    xattr -dr com.apple.quarantine /Applications/Nothinx.app
    ```
-   или открой «Системные настройки → Конфиденциальность и безопасность» и нажми «Всё равно открыть».
-3. Разреши доступ к Bluetooth, когда macOS спросит.
+   or allow it in System Settings → Privacy & Security.
+3. Allow Bluetooth access when asked.
+4. For automatic pause, allow Nothinx in System Settings → Privacy & Security → Accessibility. It is used to send the Play/Pause media key.
 
-Наушники должны быть сопряжены с Маком через «Системные настройки → Bluetooth».
-
-## Сборка из исходников
+## Building from source
 
 ```bash
 brew install xcodegen
 ./build.sh --install
 ```
 
-Виджет и плитки Пункта управления общаются с приложением через App Group, а для неё нужна подпись своей командой разработчика (хватает бесплатного Apple ID в Xcode). Поменяй `DEVELOPMENT_TEAM` в `project.yml` и префикс группы в `Resources/*.entitlements` и `Sources/NothinxKit/WidgetSnapshot.swift` на свой Team ID.
+The widget and Control Center controls share data with the app through an App Group, which requires signing with your own development team (a free Apple ID in Xcode is enough). Replace `DEVELOPMENT_TEAM` in `project.yml` and the group prefix in `Resources/*.entitlements` and `Sources/NothinxKit/WidgetSnapshot.swift` with your Team ID.
 
-`./release.sh` собирает переносимый `build/Nothinx.zip` без виджета, подписанный ad hoc.
+`./release.sh` produces a portable, ad hoc signed `build/Nothinx.zip` without the widget.
 
-Тесты протокола:
+Run the protocol tests with:
 
 ```bash
 swift test
 ```
 
-## Как устроено
+## How it works
 
-- `Sources/NothinxKit` — протокол: кадры `55 | control | command | length | fsn | payload | crc16`, разбор ответов в `BudsState`.
-- `Sources/Nothinx` — приложение: RFCOMM-канал через IOBluetooth (`BudsConnection`), модель (`BudsController`), панель на SwiftUI с Liquid Glass (`PanelView`).
-- `Widget` — расширение WidgetKit: виджет и элементы Пункта управления.
+- `Sources/NothinxKit`: the protocol. Frames are `55 | control | command | length | fsn | payload | crc16`; replies are decoded into `BudsState`.
+- `Sources/Nothinx`: the app. An RFCOMM channel through IOBluetooth (`BudsConnection`), the model (`BudsController`), and a SwiftUI panel (`PanelView`).
+- `Widget`: the WidgetKit extension with the widget and Control Center controls.
 
-Все отправленные и полученные кадры пишутся в системный лог:
+Strings live in String Catalogs (`Localizable.xcstrings`) next to the code of each target. To add a language, add translations to those catalogs and to `Sources/Nothinx/InfoPlist.xcstrings`.
+
+Every frame sent and received is written to the system log:
 
 ```bash
 /usr/bin/log stream --info --predicate 'subsystem == "dev.nothinx.app"'
 ```
 
-## Благодарности
+## Acknowledgements
 
-Протокол разобран по драйверу Nothing в [Gadgetbridge](https://codeberg.org/Freeyourgadget/Gadgetbridge) и уточнён на живых наушниках: у CMF Buds Pro 2 есть адаптивный шумодав, «найти наушники» адресуется отдельному наушнику, а запросы нужно слать с паузой.
+The protocol is based on the Nothing driver in [Gadgetbridge](https://codeberg.org/Freeyourgadget/Gadgetbridge) and was verified against real hardware. Differences found on the CMF Buds Pro 2: adaptive ANC is available, find-my-earbuds addresses each earbud separately, requests must be spaced out, and wear state arrives in event `0xE002`.
 
-Проект неофициальный и не связан с Nothing Technology.
+This is an unofficial project and is not affiliated with Nothing Technology.
 
-## Лицензия
+## License
 
 MIT

@@ -1,6 +1,7 @@
 name: Nothinx
 options:
   bundleIdPrefix: dev.nothinx
+  developmentLanguage: en
   deploymentTarget:
     macOS: "26.0"
 settings:

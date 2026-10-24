@@ -12,12 +12,12 @@ public enum NoiseMode: UInt8, CaseIterable, Sendable, Codable {
 
     public var title: String {
         switch self {
-        case .ancHigh: "Высокий"
-        case .ancMid: "Средний"
-        case .ancLow: "Низкий"
-        case .ancAdaptive: "Адаптивный"
-        case .off: "Выкл"
-        case .transparency: "Прозрачность"
+        case .ancHigh: String(localized: "High", bundle: #bundle)
+        case .ancMid: String(localized: "Medium", bundle: #bundle)
+        case .ancLow: String(localized: "Low", bundle: #bundle)
+        case .ancAdaptive: String(localized: "Adaptive", bundle: #bundle)
+        case .off: String(localized: "Off", bundle: #bundle)
+        case .transparency: String(localized: "Transparency", bundle: #bundle)
         }
     }
 
@@ -36,13 +36,13 @@ public enum EQPreset: UInt8, CaseIterable, Sendable {
 
     public var title: String {
         switch self {
-        case .balanced: "Сбалансированный"
-        case .rock: "Рок"
-        case .electronic: "Электроника"
-        case .pop: "Поп"
-        case .vocals: "Вокал"
-        case .classical: "Классика"
-        case .custom: "Свой (из Nothing X)"
+        case .balanced: String(localized: "Balanced", bundle: #bundle)
+        case .rock: String(localized: "Rock", bundle: #bundle)
+        case .electronic: String(localized: "Electronic", bundle: #bundle)
+        case .pop: String(localized: "Pop", bundle: #bundle)
+        case .vocals: String(localized: "Enhance vocals", bundle: #bundle)
+        case .classical: String(localized: "Classical", bundle: #bundle)
+        case .custom: String(localized: "Custom (from Nothing X)", bundle: #bundle)
         case .dirac: "Dirac Opteo"
         }
     }
@@ -52,7 +52,7 @@ public enum Earbud: UInt8, Sendable, CaseIterable {
     case left = 0x02
     case right = 0x03
 
-    public var title: String { self == .left ? "Левый" : "Правый" }
+    public var title: String { self == .left ? String(localized: "Left", bundle: #bundle) : String(localized: "Right", bundle: #bundle) }
 }
 
 public enum Gesture: UInt8, CaseIterable, Sendable {
@@ -63,10 +63,10 @@ public enum Gesture: UInt8, CaseIterable, Sendable {
 
     public var title: String {
         switch self {
-        case .doubleTap: "Двойное касание"
-        case .tripleTap: "Тройное касание"
-        case .hold: "Касание и удержание"
-        case .doubleTapHold: "Двойное касание и удержание"
+        case .doubleTap: String(localized: "Double tap", bundle: #bundle)
+        case .tripleTap: String(localized: "Triple tap", bundle: #bundle)
+        case .hold: String(localized: "Tap and hold", bundle: #bundle)
+        case .doubleTapHold: String(localized: "Double tap and hold", bundle: #bundle)
         }
     }
 }
@@ -86,17 +86,17 @@ public enum GestureAction: UInt8, CaseIterable, Sendable {
 
     public var title: String {
         switch self {
-        case .none: "Ничего"
-        case .playPause: "Пауза / воспроизведение"
-        case .previous: "Предыдущий трек"
-        case .next: "Следующий трек"
-        case .voiceAssistant: "Голосовой ассистент"
-        case .volumeUp: "Громче"
-        case .volumeDown: "Тише"
-        case .noiseAll: "Шумодав ⇄ Прозрачность ⇄ Выкл"
-        case .noiseANCTransparency: "Шумодав ⇄ Прозрачность"
-        case .noiseANCOff: "Шумодав ⇄ Выкл"
-        case .noiseTransparencyOff: "Прозрачность ⇄ Выкл"
+        case .none: String(localized: "Nothing", bundle: #bundle)
+        case .playPause: String(localized: "Play / pause", bundle: #bundle)
+        case .previous: String(localized: "Previous track", bundle: #bundle)
+        case .next: String(localized: "Next track", bundle: #bundle)
+        case .voiceAssistant: String(localized: "Voice assistant", bundle: #bundle)
+        case .volumeUp: String(localized: "Volume up", bundle: #bundle)
+        case .volumeDown: String(localized: "Volume down", bundle: #bundle)
+        case .noiseAll: String(localized: "ANC ⇄ Transparency ⇄ Off", bundle: #bundle)
+        case .noiseANCTransparency: String(localized: "ANC ⇄ Transparency", bundle: #bundle)
+        case .noiseANCOff: String(localized: "ANC ⇄ Off", bundle: #bundle)
+        case .noiseTransparencyOff: String(localized: "Transparency ⇄ Off", bundle: #bundle)
         }
     }
 }

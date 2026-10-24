@@ -67,17 +67,17 @@ struct PanelView: View {
             }
             Spacer()
             if let firmware = controller.state.firmware, controller.isConnected {
-                Text("ПО \(firmware)").font(.caption2).foregroundStyle(.tertiary)
+                Text("Firmware \(firmware)").font(.caption2).foregroundStyle(.tertiary)
             }
         }
     }
 
     private var statusText: String {
         switch controller.status {
-        case .noDevice: "Наушники не найдены среди сопряжённых"
-        case .disconnected: "Не подключены"
-        case .connecting: "Подключение…"
-        case .connected: "Подключены"
+        case .noDevice: String(localized: "Earbuds not found among paired devices")
+        case .disconnected: String(localized: "Not connected")
+        case .connecting: String(localized: "Connecting…")
+        case .connected: String(localized: "Connected")
         }
     }
 
@@ -92,13 +92,13 @@ struct PanelView: View {
     @ViewBuilder
     private var disconnectedHint: some View {
         if controller.status == .noDevice {
-            Text("Сначала подключи наушники к Маку в Настройках → Bluetooth.")
+            Text("Pair the earbuds with this Mac in System Settings → Bluetooth first.")
                 .font(.callout).foregroundStyle(.secondary)
         } else {
             Button {
                 controller.connect()
             } label: {
-                Label("Подключить", systemImage: "link").frame(maxWidth: .infinity)
+                Label("Connect", systemImage: "link").frame(maxWidth: .infinity)
             }
             .buttonStyle(.glassProminent)
             .controlSize(.large)
@@ -108,10 +108,10 @@ struct PanelView: View {
 
     private var footer: some View {
         HStack {
-            Button("Переподключить", systemImage: "arrow.clockwise") { controller.reconnect() }
+            Button("Reconnect", systemImage: "arrow.clockwise") { controller.reconnect() }
                 .disabled(controller.status == .noDevice)
             Spacer()
-            Button("Выйти", systemImage: "power") { NSApplication.shared.terminate(nil) }
+            Button("Quit", systemImage: "power") { NSApplication.shared.terminate(nil) }
                 .keyboardShortcut("q")
         }
         .buttonStyle(.glass)
@@ -129,11 +129,11 @@ private struct BatteryRow: View {
         let state = controller.state
         GlassEffectContainer(spacing: 8) {
             HStack(spacing: 8) {
-            BatteryCell(title: "Левый", symbol: "earbuds", battery: live ? state.left : controller.lastSeenBattery[0])
-            BatteryCell(title: "Правый", symbol: "earbuds", battery: live ? state.right : controller.lastSeenBattery[1])
+            BatteryCell(title: String(localized: "Left"), symbol: "earbuds", battery: live ? state.left : controller.lastSeenBattery[0])
+            BatteryCell(title: String(localized: "Right"), symbol: "earbuds", battery: live ? state.right : controller.lastSeenBattery[1])
             // The case only reports while a bud sits in it; hide it otherwise.
             if live, let caseBattery = state.caseBattery {
-                BatteryCell(title: "Кейс", symbol: "earbuds.case", battery: caseBattery)
+                BatteryCell(title: String(localized: "Case"), symbol: "earbuds.case", battery: caseBattery)
             }
             }
         }
@@ -183,16 +183,16 @@ private struct NoiseSection: View {
     var body: some View {
         let mode = controller.state.noiseMode
         VStack(alignment: .leading, spacing: 10) {
-            Text("Шумоподавление").font(.subheadline.weight(.semibold))
+            Text("Noise control").font(.subheadline.weight(.semibold))
             GlassEffectContainer(spacing: 8) {
                 HStack(spacing: 8) {
-                    ModeButton(title: "Шумодав", symbol: "waveform.path.ecg", selected: mode?.isANC == true) {
+                    ModeButton(title: String(localized: "ANC"), symbol: "waveform.path.ecg", selected: mode?.isANC == true) {
                         controller.enableANC()
                     }
-                    ModeButton(title: "Прозрачность", symbol: "ear.and.waveform", selected: mode == .transparency) {
+                    ModeButton(title: String(localized: "Transparency"), symbol: "ear.and.waveform", selected: mode == .transparency) {
                         controller.setNoiseMode(.transparency)
                     }
-                    ModeButton(title: "Выкл", symbol: "speaker.slash", selected: mode == .off) {
+                    ModeButton(title: String(localized: "Off"), symbol: "speaker.slash", selected: mode == .off) {
                         controller.setNoiseMode(.off)
                     }
                 }
@@ -255,8 +255,8 @@ private struct SoundSection: View {
     var body: some View {
         let state = controller.state
         VStack(alignment: .leading, spacing: 10) {
-            Text("Звук").font(.subheadline.weight(.semibold))
-            Picker("Эквалайзер", selection: Binding(
+            Text("Sound").font(.subheadline.weight(.semibold))
+            Picker("Equalizer", selection: Binding(
                 get: { state.equalizer ?? .balanced },
                 set: { controller.setEqualizer($0) }
             )) {
@@ -283,7 +283,7 @@ private struct UltraBassLevels: View {
 
     var body: some View {
         HStack(spacing: 8) {
-            Text("Уровень").font(.caption).foregroundStyle(.secondary)
+            Text("Level").font(.caption).foregroundStyle(.secondary)
             GlassEffectContainer(spacing: 6) {
                 HStack(spacing: 6) {
                     ForEach(1...5, id: \.self) { value in
@@ -317,7 +317,7 @@ private struct GesturesSection: View {
     @State private var bud: Earbud = .left
 
     var body: some View {
-        ExpandableSection(title: "Жесты", symbol: "hand.tap", expanded: $expanded) {
+        ExpandableSection(title: String(localized: "Gestures"), symbol: "hand.tap", expanded: $expanded) {
             VStack(alignment: .leading, spacing: 8) {
                 Picker("", selection: $bud) {
                     ForEach(Earbud.allCases, id: \.self) { Text($0.title).tag($0) }
@@ -353,21 +353,21 @@ private struct FeaturesSection: View {
 
     var body: some View {
         let state = controller.state
-        ExpandableSection(title: "Функции", symbol: "slider.horizontal.3", expanded: $expanded) {
+        ExpandableSection(title: String(localized: "Features"), symbol: "slider.horizontal.3", expanded: $expanded) {
             VStack(alignment: .leading, spacing: 8) {
-                Toggle("Определение уха", isOn: Binding(
+                Toggle("In-ear detection", isOn: Binding(
                     get: { state.inEarDetection ?? false },
                     set: { controller.setInEarDetection($0) }
                 ))
-                Toggle("Низкая задержка", isOn: Binding(
+                Toggle("Low latency", isOn: Binding(
                     get: { state.lowLatency ?? false },
                     set: { controller.setLowLatency($0) }
                 ))
-                Toggle("Пространственный звук", isOn: Binding(
+                Toggle("Spatial audio", isOn: Binding(
                     get: { state.spatialAudio ?? false },
                     set: { controller.setSpatialAudio($0) }
                 ))
-                Text("Найти наушники").padding(.top, 4)
+                Text("Find earbuds").padding(.top, 4)
                 HStack(spacing: 8) {
                     ForEach(Earbud.allCases, id: \.self) { bud in
                         let ringing = controller.ringing.contains(bud)
@@ -375,7 +375,7 @@ private struct FeaturesSection: View {
                             controller.toggleRinging(bud)
                         } label: {
                             Label(
-                                ringing ? "Стоп" : bud.title,
+                                ringing ? String(localized: "Stop") : bud.title,
                                 systemImage: ringing ? "speaker.slash.fill" : "speaker.wave.3.fill"
                             )
                             .frame(maxWidth: .infinity)
@@ -384,7 +384,7 @@ private struct FeaturesSection: View {
                         .tint(ringing ? .red : .accentColor)
                     }
                 }
-                Text("Наушник громко пищит, вынь его из уха.")
+                Text("The earbud beeps loudly, take it out of your ear first.")
                     .font(.caption2).foregroundStyle(.secondary)
             }
             .toggleStyle(.switch)
@@ -401,12 +401,12 @@ private struct SettingsSection: View {
     @Binding var expanded: Bool
 
     var body: some View {
-        ExpandableSection(title: "Настройки", symbol: "gearshape", expanded: $expanded) {
+        ExpandableSection(title: String(localized: "Settings"), symbol: "gearshape", expanded: $expanded) {
             VStack(alignment: .leading, spacing: 8) {
-                Picker("В строке меню", selection: $controller.menuBarDisplay) {
+                Picker("Menu bar", selection: $controller.menuBarDisplay) {
                     ForEach(MenuBarDisplay.allCases, id: \.self) { Text($0.title).tag($0) }
                 }
-                Toggle("Запускать при входе", isOn: $controller.launchAtLogin)
+                Toggle("Launch at login", isOn: $controller.launchAtLogin)
                     .toggleStyle(.switch)
             }
             .font(.callout)
